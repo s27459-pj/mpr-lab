@@ -4,18 +4,23 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import pw.karczewski.pizza.model.Pizza;
 import pw.karczewski.pizza.service.PizzaService;
 
 public class Main {
+    private static final Logger logger = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) {
         var pizzaService = getPizzaService();
 
         System.out.println("Welcome to the pizza service.");
         System.out.println("Available pizzas:");
-        var availablePizzas = pizzaService.getAvailablePizzas();
-        for (var pizza : availablePizzas) {
-            System.out.println(String.format("[%d] %s", availablePizzas.indexOf(pizza), pizza));
+        var pizzas = pizzaService.getPizzas();
+        for (var pizza : pizzas) {
+            System.out.println(String.format("[%d] %s", pizzas.indexOf(pizza), pizza));
         }
 
         try (var scanner = new Scanner(System.in)) {
@@ -48,7 +53,7 @@ public class Main {
         try {
             selectedPizzas = List.of(input.split(",")).stream()
                     .map(e -> Integer.parseInt(e.strip()))
-                    .map(pizzaService.getAvailablePizzas()::get)
+                    .map(pizzaService.getPizzas()::get)
                     .toList();
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid pizza number");
@@ -59,7 +64,7 @@ public class Main {
             var order = pizzaService.makeOrder(selectedPizzas);
             System.out.println(order.toString());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e);
         }
     }
 }

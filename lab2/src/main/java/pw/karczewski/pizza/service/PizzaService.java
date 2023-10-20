@@ -4,11 +4,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import pw.karczewski.pizza.exceptions.PizzaUnavailableException;
 import pw.karczewski.pizza.model.Order;
 import pw.karczewski.pizza.model.Pizza;
 
 public class PizzaService {
+    private static final Logger logger = LogManager.getLogger(PizzaService.class);
     private List<Pizza> pizzas;
     private List<Order> orders;
 
@@ -18,8 +22,9 @@ public class PizzaService {
     }
 
     public Order makeOrder(List<Pizza> pizzas) throws PizzaUnavailableException {
+        logger.info("Making order with {} pizza(s)", pizzas.size());
         for (var pizza : pizzas) {
-            if (!this.pizzas.contains(pizza)) {
+            if (!pizza.isAvailable()) {
                 throw new PizzaUnavailableException(pizza);
             }
         }
@@ -31,9 +36,5 @@ public class PizzaService {
 
     public List<Pizza> getPizzas() {
         return this.pizzas;
-    }
-
-    public List<Pizza> getAvailablePizzas() {
-        return this.pizzas.stream().filter(Pizza::isAvailable).toList();
     }
 }

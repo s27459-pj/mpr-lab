@@ -1,17 +1,12 @@
 package lab3.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@ToString
+@Getter
+@Setter
 public abstract class Model {
     protected Integer id;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Integer setId(Integer id) {
-        return this.id = id;
-    }
-
-    public String toString() {
-        return String.format("%s(id=%d)", getClass().getSimpleName(), id);
-    }
 }

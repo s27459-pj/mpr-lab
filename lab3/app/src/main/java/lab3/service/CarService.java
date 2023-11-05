@@ -5,13 +5,22 @@ import java.util.List;
 import lab3.exception.NotFoundException;
 import lab3.exception.ValidationException;
 import lab3.model.Car;
+import lab3.model.Rental;
 import lab3.repository.CarRepository;
+import lab3.repository.RentalRepository;
 
 public class CarService {
     private final CarRepository carRepository;
+    private final RentalRepository rentalRepository;
 
-    public CarService(CarRepository carRepository) {
+    private final CustomerService customerService;
+
+    public CarService(CarRepository carRepository,
+            RentalRepository rentalRepository,
+            CustomerService customerService) {
         this.carRepository = carRepository;
+        this.rentalRepository = rentalRepository;
+        this.customerService = customerService;
     }
 
     public Car create(Car car) {
@@ -56,5 +65,18 @@ public class CarService {
         if (car.getCarStatus() == null) {
             throw new ValidationException("status", "cannot be blank");
         }
+    }
+
+    public Car rent(int carId, int customerId, int days) {
+        var car = getById(carId);
+        if (car.getCarStatus() != Car.Status.Available) {
+            throw new ValidationException("status", "must be available");
+        }
+        var customer = customerService.getById(customerId);
+
+        // TODO: Calculate price
+        rentalRepository.create(new Rental(car.getId(), customer.getId(), days, 1000));
+        car.setCarStatus(Car.Status.Rented);
+        return update(car);
     }
 }

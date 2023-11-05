@@ -76,6 +76,10 @@ public class CarService {
     }
 
     public Car rent(int carId, int customerId, int days) {
+        if (days <= 0) {
+            throw new ValidationException("days", "must be greater than 0");
+        }
+
         var car = getById(carId);
         if (car.getCarStatus() != Car.Status.Available) {
             throw new ValidationException("status", "must be available");

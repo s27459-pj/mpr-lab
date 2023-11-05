@@ -146,6 +146,13 @@ class TestCarService {
     }
 
     @Test
+    void rentInvalidDays() {
+        var car = carRepository.create(new Car("Ford", "Fiesta", 123456, Car.Class.Standard, Car.Status.Available));
+        var customer = customerService.create(new Customer("John", "Doe", "john@doe.com", "123-123-123"));
+        assertThrows(ValidationException.class, () -> carService.rent(car.getId(), customer.getId(), 0));
+    }
+
+    @Test
     void rent() {
         var car = carRepository.create(new Car("Ford", "Fiesta", 123456, Car.Class.Standard, Car.Status.Available));
         var customer = customerService.create(new Customer("John", "Doe", "john@doe.com", "123-123-123"));

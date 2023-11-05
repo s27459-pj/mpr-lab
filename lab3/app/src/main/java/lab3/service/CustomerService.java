@@ -2,12 +2,17 @@ package lab3.service;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import lab3.exception.NotFoundException;
 import lab3.exception.ValidationException;
 import lab3.model.Customer;
 import lab3.repository.CustomerRepository;
 
-class CustomerService {
+public class CustomerService {
+    private static final Logger log = LogManager.getLogger(CustomerService.class);
+
     private final CustomerRepository customerRepository;
 
     public CustomerService(CustomerRepository customerRepository) {
@@ -16,6 +21,7 @@ class CustomerService {
 
     public Customer create(Customer customer) {
         validateCustomer(customer);
+        log.info("Created: {}", customer);
         return customerRepository.create(customer);
     }
 
@@ -29,10 +35,12 @@ class CustomerService {
 
     public Customer update(Customer customer) {
         validateCustomer(customer);
+        log.info("Updated: {}", customer);
         return customerRepository.update(customer).orElseThrow(() -> new NotFoundException("Customer"));
     }
 
     public void delete(int id) {
+        log.info("Deleted: {}", id);
         customerRepository.deleteById(id);
     }
 

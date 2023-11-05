@@ -2,6 +2,9 @@ package lab3.service;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import lab3.exception.NotFoundException;
 import lab3.exception.ValidationException;
 import lab3.model.Car;
@@ -10,6 +13,8 @@ import lab3.repository.CarRepository;
 import lab3.repository.RentalRepository;
 
 public class CarService {
+    private static final Logger log = LogManager.getLogger(CarService.class);
+
     private final CarRepository carRepository;
     private final RentalRepository rentalRepository;
 
@@ -25,6 +30,7 @@ public class CarService {
 
     public Car create(Car car) {
         validateCar(car);
+        log.info("Created: {}", car);
         return carRepository.create(car);
     }
 
@@ -42,10 +48,12 @@ public class CarService {
 
     public Car update(Car car) {
         validateCar(car);
+        log.info("Updated: {}", car);
         return carRepository.update(car).orElseThrow(() -> new NotFoundException("Car"));
     }
 
     public void delete(int id) {
+        log.info("Deleted: {}", id);
         carRepository.deleteById(id);
     }
 
@@ -77,6 +85,7 @@ public class CarService {
         // TODO: Calculate price
         rentalRepository.create(new Rental(car.getId(), customer.getId(), days, 1000));
         car.setCarStatus(Car.Status.Rented);
+        log.info("Rented: {}", car);
         return update(car);
     }
 }
